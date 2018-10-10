@@ -18,6 +18,11 @@ services:
         depends_on:
             - dockerhost
 
+    jaeger:
+        image: jaegertracing/all-in-one:latest
+        environment:
+            COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+
     dockerhost:
         image: qoomon/docker-host
         cap_add:

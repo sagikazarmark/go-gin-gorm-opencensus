@@ -12,3 +12,9 @@ services:
             - 9090:9090
         volumes:
             - ./.docker/volumes/prometheus:/prometheus
+
+    jaeger:
+        ports:
+            - 6831:6831
+            - 14268:14268
+            - 16686:16686

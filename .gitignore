@@ -2,6 +2,8 @@
 /build/
 /.docker/
 /docker-compose.override.yml
+/.env
+/.env.test
 /vendor/
 
 # IDE integration

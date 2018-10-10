@@ -3,6 +3,15 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:e95de5c830369d6592224de57a31cd87a2ba1cec2abaf050d06a63ee8f7babd8"
+  name = "git.apache.org/thrift.git"
+  packages = ["lib/go/thrift"]
+  pruneopts = "UT"
+  revision = "d566da7739c9aae63fe7fc9d267887fa73e5dda7"
+  source = "github.com/apache/thrift"
+
+[[projects]]
+  branch = "master"
   digest = "1:d6afaeed1502aa28e80a4ed0981d570ad91b2579193404256ce672ed0a609e0d"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
@@ -166,10 +175,12 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:e58ea87007791c8f6fd58bf13866e13125800483fcfae45d1ec22cebe79a078e"
+  digest = "1:3401924858561c3b290b8a98511a0fe6215c78a87b030b1c42a6499fc9981e9b"
   name = "go.opencensus.io"
   packages = [
     ".",
+    "exporter/jaeger",
+    "exporter/jaeger/internal/gen-go/jaeger",
     "exporter/prometheus",
     "internal",
     "internal/tagencoding",
@@ -177,10 +188,29 @@
     "stats/internal",
     "stats/view",
     "tag",
+    "trace",
+    "trace/internal",
+    "trace/tracestate",
   ]
   pruneopts = "UT"
   revision = "79993219becaa7e29e3b60cb67f5b8e82dee11d6"
   version = "v0.17.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  pruneopts = "UT"
+  revision = "146acd28ed5894421fb5aac80ca93bc1b1f46f87"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e0140c0c868c6e0f01c0380865194592c011fe521d6e12d78bfd33e756fe018a"
+  name = "golang.org/x/sync"
+  packages = ["semaphore"]
+  pruneopts = "UT"
+  revision = "1d60e4601c6fd243af51cc01ddf169918a5407ca"
 
 [[projects]]
   branch = "master"
@@ -189,6 +219,14 @@
   packages = ["unix"]
   pruneopts = "UT"
   revision = "4497e2df6f9e69048a54498c7affbbec3294ad47"
+
+[[projects]]
+  branch = "master"
+  digest = "1:938b0c4e4e71e191c52c959ae60ab4d814b4402e5d53a6db6ceec06cd2150058"
+  name = "google.golang.org/api"
+  packages = ["support/bundler"]
+  pruneopts = "UT"
+  revision = "ce4acf611b3920b111e21272a15ddaea10c1fd2e"
 
 [[projects]]
   digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
@@ -223,7 +261,9 @@
     "github.com/jinzhu/gorm/dialects/mysql",
     "github.com/joho/godotenv",
     "github.com/prometheus/client_golang/prometheus",
+    "go.opencensus.io/exporter/jaeger",
     "go.opencensus.io/exporter/prometheus",
+    "go.opencensus.io/trace",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

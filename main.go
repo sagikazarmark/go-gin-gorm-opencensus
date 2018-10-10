@@ -9,7 +9,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql" // blank import is used here for simplicity
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
+	"go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/exporter/prometheus"
+	"go.opencensus.io/trace"
 )
 
 func main() {
@@ -20,6 +22,23 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Sample every trace for the sake of the example.
+	// Note: do not use this in production.
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+	// Create jaeger exporter
+	je, err := jaeger.NewExporter(jaeger.Options{
+		AgentEndpoint: os.Getenv("JAEGER_AGENT_ENDPOINT"),
+		Endpoint:      os.Getenv("JAEGER_ENDPOINT"),
+		ServiceName:   "go-gin-gorm-opencensus",
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// Register jaeger as a Trace Exporter
+	trace.RegisterExporter(je)
 
 	// Connect to database
 	dsn := fmt.Sprintf(
