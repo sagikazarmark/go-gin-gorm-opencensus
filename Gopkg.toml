@@ -12,4 +12,5 @@
 
 [[constraint]]
   name = "go.opencensus.io"
-  version = "0.17.0"
+  #version = "0.17.0"
+  branch = "master"
