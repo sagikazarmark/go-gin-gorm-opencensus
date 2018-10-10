@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,11 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql" // blank import is used here for simplicity
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
+	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgin"
 	"go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/exporter/prometheus"
+	"go.opencensus.io/plugin/ochttp"
+	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 )
 
@@ -23,8 +27,25 @@ func main() {
 		panic(err)
 	}
 
-	// Sample every trace for the sake of the example.
-	// Note: do not use this in production.
+	// Register prometheus as a stats exporter
+	view.RegisterExporter(pe)
+
+	// Register stat views
+	err = view.Register(
+		ochttp.ServerRequestCountView,
+		ochttp.ServerRequestBytesView,
+		ochttp.ServerResponseBytesView,
+		ochttp.ServerLatencyView,
+		ochttp.ServerRequestCountByMethod,
+		ochttp.ServerResponseCountByStatusCode,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Always trace for this demo. In a production application, you should
+	// configure this to a trace.ProbabilitySampler set at the desired
+	// probability.
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
 	// Create jaeger exporter
@@ -37,7 +58,7 @@ func main() {
 		panic(err)
 	}
 
-	// Register jaeger as a Trace Exporter
+	// Register jaeger as a trace exporter
 	trace.RegisterExporter(je)
 
 	// Connect to database
@@ -64,6 +85,8 @@ func main() {
 	// Initialize Gin engine
 	r := gin.Default()
 
+	r.Use((&ocgin.Handler{}).HandlerFunc)
+
 	// Add routes
 	r.POST("/people", internal.CreatePerson(db))
 	r.GET("/hello/:firstName", internal.Hello(db))
@@ -72,5 +95,7 @@ func main() {
 	}))
 
 	// Listen and serve on 0.0.0.0:8080
-	r.Run()
+	address := "127.0.0.1:8080"
+	fmt.Printf("Listening and serving HTTP on %s\n", address)
+	http.ListenAndServe(address, r) // nolint: errcheck
 }
