@@ -85,14 +85,17 @@ func main() {
 	// Initialize Gin engine
 	r := gin.Default()
 
-	r.Use((&ocgin.Handler{}).HandlerFunc)
-
-	// Add routes
-	r.POST("/people", internal.CreatePerson(db))
-	r.GET("/hello/:firstName", internal.Hello(db))
 	r.GET("/metrics", gin.HandlerFunc(func(c *gin.Context) {
 		pe.ServeHTTP(c.Writer, c.Request)
 	}))
+
+	r.Use((&ocgin.Handler{}).HandlerFunc)
+
+	router := ocgin.NewTracedRouter(r)
+
+	// Add routes
+	router.POST("/people", internal.CreatePerson(db))
+	router.GET("/hello/:firstName", internal.Hello(db))
 
 	// Listen and serve on 0.0.0.0:8080
 	address := "127.0.0.1:8080"
