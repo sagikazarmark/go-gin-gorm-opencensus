@@ -106,6 +106,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:65abb17699dcf57c6744a0a422f94a698d4afc76b2a4582a9cff6e1d75a9c941"
+  name = "go.opencensus.io"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "79993219becaa7e29e3b60cb67f5b8e82dee11d6"
+  version = "v0.17.0"
+
+[[projects]]
   branch = "master"
   digest = "1:c2789211d4035eb0843b85958ecf7cb4a5ea91c2d4decee652c94ce898e433cb"
   name = "golang.org/x/sys"
@@ -145,6 +153,7 @@
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",
     "github.com/joho/godotenv",
+    "go.opencensus.io",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

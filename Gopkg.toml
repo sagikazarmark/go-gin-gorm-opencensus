@@ -9,3 +9,7 @@
 [[constraint]]
   name = "github.com/jinzhu/gorm"
   version = "1.9.1"
+
+[[constraint]]
+  name = "go.opencensus.io"
+  version = "0.17.0"
