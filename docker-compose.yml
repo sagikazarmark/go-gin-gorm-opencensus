@@ -7,3 +7,20 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: database
+
+    prometheus:
+        image: prom/prometheus:v2.4.3
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+            - '--storage.tsdb.path=/prometheus'
+        volumes:
+            - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+        depends_on:
+            - dockerhost
+
+    dockerhost:
+        image: qoomon/docker-host
+        cap_add:
+            - NET_ADMIN
+            - NET_RAW
+        restart: on-failure
