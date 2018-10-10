@@ -1,0 +1,13 @@
+linters:
+    enable-all: true
+    disable:
+        - maligned
+
+linters-settings:
+    golint:
+        min-confidence: 0.1
+
+issues:
+    exclude:
+        - "Error return value of `r.Run` is not checked"
+        - G104

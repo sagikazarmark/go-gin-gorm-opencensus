@@ -6,10 +6,37 @@ BINARY_NAME = go-gin-gorm-opencensus
 
 # Build variables
 BUILD_DIR = build
+BUILD_PACKAGE = ${PACKAGE}
 
 # Dependency versions
 DEP_VERSION = 0.5.0
 GOLANGCI_VERSION = 1.10.2
+
+.PHONY: up
+up: vendor start .env .env.test ## Set up the development environment
+
+.PHONY: down
+down: clean ## Destroy the development environment
+	docker-compose down
+	rm -rf .docker/
+
+.PHONY: reset
+reset: down up ## Reset the development environment
+
+.PHONY: clean
+clean: ## Clean the working area and the project
+	rm -rf bin/ ${BUILD_DIR}/ vendor/
+
+docker-compose.override.yml: ## Create docker compose override file
+	cp docker-compose.override.yml.dist docker-compose.override.yml
+
+.PHONY: start
+start: docker-compose.override.yml ## Start docker development environment
+	docker-compose up -d
+
+.PHONY: stop
+stop: ## Stop docker development environment
+	docker-compose stop
 
 bin/dep: bin/dep-${DEP_VERSION}
 bin/dep-${DEP_VERSION}:
@@ -22,33 +49,20 @@ bin/dep-${DEP_VERSION}:
 vendor: bin/dep ## Install dependencies
 	bin/dep ensure -v -vendor-only
 
-.PHONY: clean
-clean: reset ## Clean the working area and the project
-	rm -rf bin/ ${BUILD_DIR}/ vendor/
+.env: ## Create local env file
+	cp .env.dist .env
+
+.env.test: ## Create local env file for running tests
+	cp .env.dist .env.test
 
 .PHONY: run
-run: build ## Build and execute a binary
+run: TAGS += dev
+run: build .env ## Build and execute a binary
 	${BUILD_DIR}/${BINARY_NAME} ${ARGS}
 
 .PHONY: build
 build: ## Build a binary
-	CGO_ENABLED=0 go build -o ${BUILD_DIR}/${BINARY_NAME} ${PACKAGE}
-
-docker-compose.override.yml: ## Create docker compose override file
-	cp docker-compose.override.yml.dist docker-compose.override.yml
-
-.PHONY: start
-start: docker-compose.override.yml # Start docker development environment
-	docker-compose up -d
-
-.PHONY: stop
-stop: # Stop docker development environment
-	docker-compose stop
-
-.PHONY: reset
-reset: # Reset docker development environment
-	docker-compose down
-	rm -rf .docker/
+	CGO_ENABLED=0 go build -tags '${TAGS}' -o ${BUILD_DIR}/${BINARY_NAME} ${BUILD_PACKAGE}
 
 .PHONY: check
 check: test lint ## Run tests and linters
