@@ -56,19 +56,6 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:2e3c336fc7fde5c984d2841455a658a6d626450b1754a854b3b32e7a8f49a07a"
-  name = "github.com/google/go-cmp"
-  packages = [
-    "cmp",
-    "cmp/internal/diff",
-    "cmp/internal/function",
-    "cmp/internal/value",
-  ]
-  pruneopts = "UT"
-  revision = "3af367b6b30c263d47e8895973edcca9a49cf029"
-  version = "v0.2.0"
-
-[[projects]]
   digest = "1:b6f4477f09f11785097a121811f3a90d8d26cab73c1aa71abda859bdf6ad2334"
   name = "github.com/jinzhu/gorm"
   packages = [
@@ -188,12 +175,10 @@
   version = "v1.1.1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:6f5b9b222eda9b5251541c46ea263300827c4f919dc89a5971b6f4a06c40fcb9"
+  digest = "1:088081deb658468a5d675728e77d315437b7902c6e433a0ec44ee9bbf7daa8cc"
   name = "go.opencensus.io"
   packages = [
     ".",
-    "exemplar",
     "exporter/jaeger",
     "exporter/jaeger/internal/gen-go/jaeger",
     "exporter/prometheus",
@@ -211,19 +196,14 @@
     "trace/tracestate",
   ]
   pruneopts = "UT"
-  revision = "ae36bd8445ff9cde752c94cf0d4f3f9dced1facc"
+  revision = "79993219becaa7e29e3b60cb67f5b8e82dee11d6"
+  version = "v0.17.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:b41f13f4d5dbbd63abe9bf646575e4f83d2637ca243b97ea79b7807242518e8c"
+  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
   name = "golang.org/x/net"
-  packages = [
-    "context",
-    "http/httpguts",
-    "http2",
-    "http2/hpack",
-    "idna",
-  ]
+  packages = ["context"]
   pruneopts = "UT"
   revision = "146acd28ed5894421fb5aac80ca93bc1b1f46f87"
 
@@ -242,29 +222,6 @@
   packages = ["unix"]
   pruneopts = "UT"
   revision = "4497e2df6f9e69048a54498c7affbbec3294ad47"
-
-[[projects]]
-  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
-  name = "golang.org/x/text"
-  packages = [
-    "collate",
-    "collate/build",
-    "internal/colltab",
-    "internal/gen",
-    "internal/tag",
-    "internal/triegen",
-    "internal/ucd",
-    "language",
-    "secure/bidirule",
-    "transform",
-    "unicode/bidi",
-    "unicode/cldr",
-    "unicode/norm",
-    "unicode/rangetable",
-  ]
-  pruneopts = "UT"
-  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
-  version = "v0.3.0"
 
 [[projects]]
   branch = "master"
@@ -303,7 +260,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/gin-gonic/gin",
-    "github.com/google/go-cmp/cmp",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",
     "github.com/joho/godotenv",
@@ -311,13 +267,10 @@
     "go.opencensus.io/exporter/jaeger",
     "go.opencensus.io/exporter/prometheus",
     "go.opencensus.io/plugin/ochttp",
-    "go.opencensus.io/plugin/ochttp/propagation/b3",
     "go.opencensus.io/stats",
     "go.opencensus.io/stats/view",
     "go.opencensus.io/tag",
     "go.opencensus.io/trace",
-    "go.opencensus.io/trace/propagation",
-    "golang.org/x/net/http2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
