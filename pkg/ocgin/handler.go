@@ -15,6 +15,53 @@ import (
 	"go.opencensus.io/trace/propagation"
 )
 
+// Option allows for managing ocgin configuration using functional options.
+type Option interface {
+	apply(h *Handler)
+}
+
+// OptionFunc converts a regular function to an Option if it's definition is compatible.
+type OptionFunc func(h *Handler)
+
+func (fn OptionFunc) apply(h *Handler) {
+	fn(h)
+}
+
+// Propagation configures how traces are propagated.
+func Propagation(p propagation.HTTPFormat) Option {
+	return OptionFunc(func(h *Handler) {
+		h.Propagation = p
+	})
+}
+
+// StartOptions configures the initial options applied to a span.
+func StartOptions(o trace.StartOptions) Option {
+	return OptionFunc(func(h *Handler) {
+		h.StartOptions = o
+	})
+}
+
+// GetStartOptions configures the function that creates initial options applied to a span per request.
+func GetStartOptions(o func(ctx *gin.Context) trace.StartOptions) Option {
+	return OptionFunc(func(h *Handler) {
+		h.GetStartOptions = o
+	})
+}
+
+// IsPublicEndpoint configures how incoming traces should be handled.
+type IsPublicEndpoint bool
+
+func (i IsPublicEndpoint) apply(h *Handler) {
+	h.IsPublicEndpoint = bool(i)
+}
+
+// FormatSpanName configures the span name generator function.
+func FormatSpanName(o func(ctx *gin.Context) string) Option {
+	return OptionFunc(func(h *Handler) {
+		h.FormatSpanName = o
+	})
+}
+
 // Handler is a gin.HandlerFunc wrapper to instrument your Gin HTTP server with
 // OpenCensus. It supports both stats and tracing.
 //
@@ -56,6 +103,22 @@ type Handler struct {
 	// from the information found in the incoming HTTP Request. By default the
 	// name equals the URL Path.
 	FormatSpanName func(ctx *gin.Context) string
+}
+
+// NewHandler creates a new Handler instance.
+func NewHandler(opts ...Option) *Handler {
+	h := &Handler{}
+
+	for _, opt := range opts {
+		opt.apply(h)
+	}
+
+	return h
+}
+
+// NewMiddleware returns an OpenCensus instrumentation middleware for Gin.
+func NewMiddleware(opts ...Option) gin.HandlerFunc {
+	return NewHandler(opts...).HandlerFunc
 }
 
 func (h *Handler) HandlerFunc(c *gin.Context) {

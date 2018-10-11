@@ -89,7 +89,7 @@ func main() {
 		pe.ServeHTTP(c.Writer, c.Request)
 	}))
 
-	r.Use((&ocgin.Handler{}).HandlerFunc)
+	r.Use(ocgin.NewMiddleware())
 
 	router := ocgin.NewTracedRouter(r)
 

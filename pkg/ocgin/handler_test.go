@@ -69,11 +69,9 @@ func TestHandlerStatsCollection(t *testing.T) {
 			r := httptest.NewRequest(test.method, test.target, body)
 			w := httptest.NewRecorder()
 			e := gin.New()
-			e.Use((&Handler{
-				StartOptions: trace.StartOptions{
-					Sampler: trace.NeverSample(),
-				},
-			}).HandlerFunc)
+			e.Use(NewMiddleware(StartOptions(trace.StartOptions{
+				Sampler: trace.NeverSample(),
+			})))
 
 			e.Any("/request/:any", httpHandler(test.statusCode, test.respSize))
 
@@ -289,7 +287,7 @@ const (
 
 func setupAndStartServer(hf func(c *gin.Context), isHTTP2 bool) *httptest.Server {
 	e := gin.New()
-	e.Use((&Handler{}).HandlerFunc)
+	e.Use(NewMiddleware())
 	e.Any("/", hf)
 
 	cst := httptest.NewUnstartedServer(e)
@@ -422,11 +420,9 @@ func TestIgnoreHealthz(t *testing.T) {
 	var spans int
 
 	e := gin.New()
-	e.Use((&Handler{
-		StartOptions: trace.StartOptions{
-			Sampler: trace.AlwaysSample(),
-		},
-	}).HandlerFunc)
+	e.Use(NewMiddleware(StartOptions(trace.StartOptions{
+		Sampler: trace.AlwaysSample(),
+	})))
 
 	hf := gin.HandlerFunc(func(c *gin.Context) {
 		span := trace.FromContext(c.Request.Context())
