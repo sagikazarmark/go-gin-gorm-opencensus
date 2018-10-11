@@ -10,7 +10,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql" // blank import is used here for simplicity
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
-	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgin"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
 	"go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/exporter/prometheus"
@@ -97,16 +96,26 @@ func main() {
 		pe.ServeHTTP(c.Writer, c.Request)
 	}))
 
-	r.Use(ocgin.NewMiddleware())
-
-	router := ocgin.NewTracedRouter(r)
-
 	// Add routes
-	router.POST("/people", internal.CreatePerson(db))
-	router.GET("/hello/:firstName", internal.Hello(db))
+	r.POST("/people", internal.CreatePerson(db))
+	r.GET("/hello/:firstName", internal.Hello(db))
 
 	// Listen and serve on 0.0.0.0:8080
 	address := "127.0.0.1:8080"
 	fmt.Printf("Listening and serving HTTP on %s\n", address)
-	http.ListenAndServe(address, r) // nolint: errcheck
+	http.ListenAndServe( // nolint: errcheck
+		address,
+		&ochttp.Handler{
+			Handler: r,
+			GetStartOptions: func(r *http.Request) trace.StartOptions {
+				startOptions := trace.StartOptions{}
+
+				if r.URL.Path == "/metrics" {
+					startOptions.Sampler = trace.NeverSample()
+				}
+
+				return startOptions
+			},
+		},
+	)
 }
