@@ -11,6 +11,7 @@ import (
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
 	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgin"
+	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
 	"go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
@@ -32,12 +33,16 @@ func main() {
 
 	// Register stat views
 	err = view.Register(
+		// Gin (HTTP) stats
 		ochttp.ServerRequestCountView,
 		ochttp.ServerRequestBytesView,
 		ochttp.ServerResponseBytesView,
 		ochttp.ServerLatencyView,
 		ochttp.ServerRequestCountByMethod,
 		ochttp.ServerResponseCountByStatusCode,
+
+		// Gorm stats
+		ocgorm.QueryCountView,
 	)
 	if err != nil {
 		panic(err)
@@ -74,6 +79,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Register instrumentation callbacks
+	ocgorm.RegisterCallbacks(db)
 
 	// Run migrations and fixtures
 	db.AutoMigrate(internal.Person{})

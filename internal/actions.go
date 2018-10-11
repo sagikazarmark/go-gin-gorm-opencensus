@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
 )
 
 type NewPerson struct {
@@ -29,7 +30,9 @@ func CreatePerson(db *gorm.DB) gin.HandlerFunc {
 			LastName:  newPerson.LastName,
 		}
 
-		err = db.Create(&person).Error
+		orm := ocgorm.WithContext(c.Request.Context(), db)
+
+		err = orm.Create(&person).Error
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, &gin.Error{Err: err})
 
@@ -48,7 +51,9 @@ func Hello(db *gorm.DB) gin.HandlerFunc {
 			FirstName: firstName,
 		}
 
-		err := db.Where(person).First(&person).Error
+		orm := ocgorm.WithContext(c.Request.Context(), db)
+
+		err := orm.Where(person).First(&person).Error
 		if gorm.IsRecordNotFoundError(err) {
 			c.AbortWithStatusJSON(http.StatusNotFound, &gin.Error{Err: err})
 
