@@ -54,9 +54,11 @@ func main() {
 
 	// Create jaeger exporter
 	je, err := jaeger.NewExporter(jaeger.Options{
-		AgentEndpoint: os.Getenv("JAEGER_AGENT_ENDPOINT"),
-		Endpoint:      os.Getenv("JAEGER_ENDPOINT"),
-		ServiceName:   "go-gin-gorm-opencensus",
+		AgentEndpoint:     os.Getenv("JAEGER_AGENT_ENDPOINT"),
+		CollectorEndpoint: os.Getenv("JAEGER_ENDPOINT"),
+		Process: jaeger.Process{
+			ServiceName: "go-gin-gorm-opencensus",
+		},
 	})
 	if err != nil {
 		panic(err)
