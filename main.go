@@ -5,17 +5,18 @@ import (
 	"net/http"
 	"os"
 
+	"contrib.go.opencensus.io/exporter/jaeger"
+	"contrib.go.opencensus.io/exporter/prometheus"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // blank import is used here for simplicity
 	prom "github.com/prometheus/client_golang/prometheus"
-	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
-	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
-	"go.opencensus.io/exporter/jaeger"
-	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
+
+	"github.com/sagikazarmark/go-gin-gorm-opencensus/internal"
+	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
 )
 
 func main() {

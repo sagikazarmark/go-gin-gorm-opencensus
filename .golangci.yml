@@ -5,6 +5,7 @@ linters:
     enable-all: true
     disable:
         - maligned
+        - gochecknoglobals
 
 linters-settings:
     golint:
