@@ -100,8 +100,20 @@ func main() {
 	}))
 
 	// Add routes
-	r.POST("/people", internal.CreatePerson(db))
-	r.GET("/hello/:firstName", internal.Hello(db))
+	r.POST(
+		"/people",
+		func(c *gin.Context) {
+			ochttp.SetRoute(c.Request.Context(), "/people")
+		},
+		internal.CreatePerson(db),
+	)
+	r.GET(
+		"/hello/:firstName",
+		func(c *gin.Context) {
+			ochttp.SetRoute(c.Request.Context(), "/hello/:firstName")
+		},
+		internal.Hello(db),
+	)
 
 	// Listen and serve on 0.0.0.0:8080
 	address := "127.0.0.1:8080"
