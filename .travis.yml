@@ -6,7 +6,7 @@ go:
     - 1.12.x
 
 env:
-    - GO11MODULE=on
+    - GO111MODULE=on
 
 branches:
     only:
