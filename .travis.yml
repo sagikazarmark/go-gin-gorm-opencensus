@@ -5,6 +5,9 @@ sudo: false
 go:
     - 1.12.x
 
+env:
+    - GO11MODULE=on
+
 branches:
     only:
         - master
