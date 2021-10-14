@@ -165,6 +165,11 @@ func (c *callbacks) endTrace(scope *gorm.Scope) {
 		return
 	}
 
+	// Add query to the span if requested
+	if c.query {
+		span.AddAttributes(trace.StringAttribute(QueryAttribute, scope.SQL))
+	}
+
 	var status trace.Status
 
 	if scope.HasError() {
