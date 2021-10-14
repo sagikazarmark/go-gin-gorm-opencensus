@@ -90,6 +90,8 @@ func RegisterCallbacks(db *gorm.DB, opts ...Option) {
 	db.Callback().Create().After("gorm:create").Register("instrumentation:after_create", c.afterCreate)
 	db.Callback().Query().Before("gorm:query").Register("instrumentation:before_query", c.beforeQuery)
 	db.Callback().Query().After("gorm:query").Register("instrumentation:after_query", c.afterQuery)
+	db.Callback().RowQuery().Before("gorm:row_query").Register("instrumentation:before_row_query", c.beforeRowQuery)
+	db.Callback().RowQuery().After("gorm:row_query").Register("instrumentation:after_row_query", c.afterRowQuery)
 	db.Callback().Update().Before("gorm:update").Register("instrumentation:before_update", c.beforeUpdate)
 	db.Callback().Update().After("gorm:update").Register("instrumentation:after_update", c.afterUpdate)
 	db.Callback().Delete().Before("gorm:delete").Register("instrumentation:before_delete", c.beforeDelete)
@@ -207,6 +209,8 @@ func (c *callbacks) beforeCreate(scope *gorm.Scope) { c.before(scope, "create") 
 func (c *callbacks) afterCreate(scope *gorm.Scope)  { c.after(scope) }
 func (c *callbacks) beforeQuery(scope *gorm.Scope)  { c.before(scope, "query") }
 func (c *callbacks) afterQuery(scope *gorm.Scope)   { c.after(scope) }
+func (c *callbacks) beforeRowQuery(scope *gorm.Scope)  { c.before(scope, "row_query") }
+func (c *callbacks) afterRowQuery(scope *gorm.Scope)   { c.after(scope) }
 func (c *callbacks) beforeUpdate(scope *gorm.Scope) { c.before(scope, "update") }
 func (c *callbacks) afterUpdate(scope *gorm.Scope)  { c.after(scope) }
 func (c *callbacks) beforeDelete(scope *gorm.Scope) { c.before(scope, "delete") }
