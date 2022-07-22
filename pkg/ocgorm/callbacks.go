@@ -146,7 +146,7 @@ func (c *callbacks) startTrace(ctx context.Context, scope *gorm.Scope, operation
 	)
 
 	if c.query {
-		attributes = append(attributes, trace.StringAttribute(QueryAttribute, scope.SQL))
+		attributes = append(attributes, trace.StringAttribute(ResourceNameAttribute, scope.SQL))
 	}
 
 	span.AddAttributes(attributes...)
@@ -169,7 +169,7 @@ func (c *callbacks) endTrace(scope *gorm.Scope) {
 
 	// Add query to the span if requested
 	if c.query {
-		span.AddAttributes(trace.StringAttribute(QueryAttribute, scope.SQL))
+		span.AddAttributes(trace.StringAttribute(ResourceNameAttribute, scope.SQL))
 	}
 
 	var status trace.Status
@@ -210,13 +210,13 @@ func (c *callbacks) endStats(scope *gorm.Scope) {
 	stats.Record(ctx, QueryCount.M(1))
 }
 
-func (c *callbacks) beforeCreate(scope *gorm.Scope) { c.before(scope, "create") }
-func (c *callbacks) afterCreate(scope *gorm.Scope)  { c.after(scope) }
-func (c *callbacks) beforeQuery(scope *gorm.Scope)  { c.before(scope, "query") }
-func (c *callbacks) afterQuery(scope *gorm.Scope)   { c.after(scope) }
-func (c *callbacks) beforeRowQuery(scope *gorm.Scope)  { c.before(scope, "row_query") }
-func (c *callbacks) afterRowQuery(scope *gorm.Scope)   { c.after(scope) }
-func (c *callbacks) beforeUpdate(scope *gorm.Scope) { c.before(scope, "update") }
-func (c *callbacks) afterUpdate(scope *gorm.Scope)  { c.after(scope) }
-func (c *callbacks) beforeDelete(scope *gorm.Scope) { c.before(scope, "delete") }
-func (c *callbacks) afterDelete(scope *gorm.Scope)  { c.after(scope) }
+func (c *callbacks) beforeCreate(scope *gorm.Scope)   { c.before(scope, "create") }
+func (c *callbacks) afterCreate(scope *gorm.Scope)    { c.after(scope) }
+func (c *callbacks) beforeQuery(scope *gorm.Scope)    { c.before(scope, "query") }
+func (c *callbacks) afterQuery(scope *gorm.Scope)     { c.after(scope) }
+func (c *callbacks) beforeRowQuery(scope *gorm.Scope) { c.before(scope, "row_query") }
+func (c *callbacks) afterRowQuery(scope *gorm.Scope)  { c.after(scope) }
+func (c *callbacks) beforeUpdate(scope *gorm.Scope)   { c.before(scope, "update") }
+func (c *callbacks) afterUpdate(scope *gorm.Scope)    { c.after(scope) }
+func (c *callbacks) beforeDelete(scope *gorm.Scope)   { c.before(scope, "delete") }
+func (c *callbacks) afterDelete(scope *gorm.Scope)    { c.after(scope) }
