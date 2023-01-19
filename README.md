@@ -1,8 +1,8 @@
 # Go OpenCensus example for Gin and Gorm
 
 [![Build Status](https://img.shields.io/travis/com/sagikazarmark/go-gin-gorm-opencensus.svg?style=flat-square)](https://travis-ci.com/sagikazarmark/go-gin-gorm-opencensus)
-[![Go Report Card](https://goreportcard.com/badge/github.com/sagikazarmark/go-gin-gorm-opencensus?style=flat-square)](https://goreportcard.com/report/github.com/sagikazarmark/go-gin-gorm-opencensus)
-[![GolangCI](https://golangci.com/badges/github.com/sagikazarmark/go-gin-gorm-opencensus.svg)](https://golangci.com/r/github.com/sagikazarmark/go-gin-gorm-opencensus)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hashicorp/go-gin-gorm-opencensus?style=flat-square)](https://goreportcard.com/report/github.com/hashicorp/go-gin-gorm-opencensus)
+[![GolangCI](https://golangci.com/badges/github.com/hashicorp/go-gin-gorm-opencensus.svg)](https://golangci.com/r/github.com/hashicorp/go-gin-gorm-opencensus)
 
 This repository serves as an example for configuring [OpenCensus](http://opencensus.io/) to
 instrument applications written using [Gin](https://gin-gonic.github.io/gin/) framework

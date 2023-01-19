@@ -1,7 +1,7 @@
 # A Self-Documenting Makefile: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 
 # Project variables
-PACKAGE = github.com/sagikazarmark/go-gin-gorm-opencensus
+PACKAGE = github.com/hashicorp/go-gin-gorm-opencensus
 BINARY_NAME = go-gin-gorm-opencensus
 
 # Build variables

@@ -3,6 +3,7 @@ package ocgorm
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"go.opencensus.io/stats"
@@ -190,8 +191,16 @@ func (c *callbacks) endTrace(scope *gorm.Scope) {
 	span.End()
 }
 
+var (
+	queryStartPropagator, _ = tag.NewKey("sql.query_start")
+)
+
 func (c *callbacks) startStats(ctx context.Context, scope *gorm.Scope, operation string) context.Context {
-	ctx, _ = tag.New(ctx, tag.Upsert(Operation, operation), tag.Upsert(Table, scope.TableName()))
+	ctx, _ = tag.New(ctx,
+		tag.Upsert(Operation, operation),
+		tag.Upsert(Table, scope.TableName()),
+		tag.Upsert(queryStartPropagator, time.Now().String()),
+	)
 
 	return ctx
 }
@@ -203,11 +212,27 @@ func (c *callbacks) endStats(scope *gorm.Scope) {
 
 	rctx, _ := scope.Get(contextScopeKey)
 	ctx, ok := rctx.(context.Context)
+
 	if !ok || ctx == nil {
 		return
 	}
 
-	stats.Record(ctx, QueryCount.M(1))
+	tags := tag.FromContext(ctx)
+	ctx, _ = tag.New(ctx, tag.Delete(queryStartPropagator))
+	queryStartS, exists := tags.Value(queryStartPropagator)
+
+	if exists {
+		queryStart, err := time.Parse(time.Layout, queryStartS)
+		if err != nil {
+			return
+		}
+
+		timeSpentMs := float64(time.Since(queryStart).Nanoseconds()) / 1e6
+
+		stats.Record(ctx, MeasureLatencyMs.M(timeSpentMs))
+	}
+
+	stats.Record(ctx, MeasureQueryCount.M(1))
 }
 
 func (c *callbacks) beforeCreate(scope *gorm.Scope)   { c.before(scope, "create") }

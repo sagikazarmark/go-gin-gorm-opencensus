@@ -1,4 +1,4 @@
-module github.com/sagikazarmark/go-gin-gorm-opencensus
+module github.com/hashicorp/go-gin-gorm-opencensus
 
 go 1.12
 
@@ -10,7 +10,6 @@ require (
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-sql-driver/mysql v1.4.0 // indirect
-	github.com/gogo/protobuf v1.2.0 // indirect
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.0 // indirect

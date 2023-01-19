@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/go-gin-gorm-opencensus/pkg/ocgorm"
 	"github.com/jinzhu/gorm"
-	"github.com/sagikazarmark/go-gin-gorm-opencensus/pkg/ocgorm"
 )
 
 type NewPerson struct {

@@ -5,6 +5,7 @@ package ocgorm
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,16 +18,16 @@ import (
 // Tags applied to measures
 var (
 	// Operation is the type of query (SELECT, INSERT, UPDATE, DELETE)
-	Operation, _ = tag.NewKey("gorm.operation")
+	Operation, _ = tag.NewKey("sql.operation")
 
 	// Table name of the target database table
-	Table, _ = tag.NewKey("gorm.table")
+	Table, _ = tag.NewKey("sql.table")
 )
 
 // Measures
 var (
-	QueryCount               = stats.Int64("opencensus.io/gorm/query_count", "Number of queries started", stats.UnitDimensionless)
-	MeasureLatencyMs         = stats.Float64("go.sql/latency", "The latency of calls in milliseconds", stats.UnitMilliseconds)
+	MeasureQueryCount        = stats.Int64("go.sql/client/query_count", "Number of queries started", stats.UnitDimensionless)
+	MeasureLatencyMs         = stats.Float64("go.sql/client/latency", "The latency of calls in milliseconds", stats.UnitMilliseconds)
 	MeasureOpenConnections   = stats.Int64("go.sql/connections/open", "Count of open connections in the pool", stats.UnitDimensionless)
 	MeasureIdleConnections   = stats.Int64("go.sql/connections/idle", "Count of idle connections in the pool", stats.UnitDimensionless)
 	MeasureActiveConnections = stats.Int64("go.sql/connections/active", "Count of active connections in the pool", stats.UnitDimensionless)
@@ -74,11 +75,11 @@ var (
 
 var (
 	QueryCountView = &view.View{
-		Name:        "opencensus.io/gorm/query_count",
+		Name:        "go.sql/client/query_count",
 		Description: "Count of queries started",
-		TagKeys:     []tag.Key{Operation, Table},
-		Measure:     QueryCount,
+		Measure:     MeasureQueryCount,
 		Aggregation: view.Count(),
+		TagKeys:     []tag.Key{Operation, Table},
 	}
 
 	SQLClientOpenConnectionsView = &view.View{
@@ -168,6 +169,14 @@ func RecordStats(db *gorm.DB, interval time.Duration) (fnStop func()) {
 			select {
 			case <-ticker.C:
 				dbStats := db.DB().Stats()
+
+				if dbStats.OpenConnections == 0 { // We cleanup the ticker in the event that the database is unavailable
+					if err := db.DB().Ping(); strings.Contains(err.Error(), "database is closed") {
+						ticker.Stop()
+						return
+					}
+				}
+
 				stats.Record(ctx,
 					MeasureOpenConnections.M(int64(dbStats.OpenConnections)),
 					MeasureIdleConnections.M(int64(dbStats.Idle)),
