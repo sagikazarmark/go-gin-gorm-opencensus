@@ -42,7 +42,7 @@ func main() {
 		ochttp.ServerResponseCountByStatusCode,
 
 		// Gorm stats
-		ocgorm.QueryCountView,
+		ocgorm.SQLClientCallsView,
 	)
 	if err != nil {
 		panic(err)

@@ -26,7 +26,7 @@ var (
 
 // Measures
 var (
-	MeasureQueryCount        = stats.Int64("go.sql/client/query_count", "Number of queries started", stats.UnitDimensionless)
+	MeasureQueryCount        = stats.Int64("go.sql/client/calls", "Number of queries started", stats.UnitDimensionless)
 	MeasureLatencyMs         = stats.Float64("go.sql/client/latency", "The latency of calls in milliseconds", stats.UnitMilliseconds)
 	MeasureOpenConnections   = stats.Int64("go.sql/connections/open", "Count of open connections in the pool", stats.UnitDimensionless)
 	MeasureIdleConnections   = stats.Int64("go.sql/connections/idle", "Count of idle connections in the pool", stats.UnitDimensionless)
@@ -74,9 +74,17 @@ var (
 )
 
 var (
-	QueryCountView = &view.View{
-		Name:        "go.sql/client/query_count",
-		Description: "Count of queries started",
+	SQLClientLatencyView = &view.View{
+		Name:        "go.sql/client/latency",
+		Description: "The distribution of latencies of various calls in milliseconds",
+		Measure:     MeasureLatencyMs,
+		Aggregation: DefaultMillisecondsDistribution,
+		TagKeys:     []tag.Key{Operation, Table},
+	}
+
+	SQLClientCallsView = &view.View{
+		Name:        "go.sql/client/calls",
+		Description: "The number of various calls of methods",
 		Measure:     MeasureQueryCount,
 		Aggregation: view.Count(),
 		TagKeys:     []tag.Key{Operation, Table},
@@ -139,7 +147,7 @@ var (
 	}
 
 	DefaultViews = []*view.View{
-		SQLClientOpenConnectionsView,
+		SQLClientCallsView, SQLClientLatencyView, SQLClientOpenConnectionsView,
 		SQLClientIdleConnectionsView, SQLClientActiveConnectionsView,
 		SQLClientWaitCountView, SQLClientWaitDurationView,
 		SQLClientIdleClosedView, SQLClientLifetimeClosedView,
