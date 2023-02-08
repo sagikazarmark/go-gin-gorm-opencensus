@@ -97,7 +97,6 @@ func RegisterCallbacks(db *gorm.DB, opts ...Option) {
 	db.Callback().Update().After("gorm:update").Register("instrumentation:after_update", c.afterUpdate)
 	db.Callback().Delete().Before("gorm:delete").Register("instrumentation:before_delete", c.beforeDelete)
 	db.Callback().Delete().After("gorm:delete").Register("instrumentation:after_delete", c.afterDelete)
-	fmt.Println("all callbacks registered")
 }
 
 func (c *callbacks) before(scope *gorm.Scope, operation string) {
@@ -197,7 +196,6 @@ var (
 )
 
 func (c *callbacks) startStats(ctx context.Context, scope *gorm.Scope, operation string) context.Context {
-	fmt.Println("running startStats")
 	ctx, _ = tag.New(ctx,
 		tag.Upsert(Operation, operation),
 		tag.Upsert(Table, scope.TableName()),
@@ -208,36 +206,29 @@ func (c *callbacks) startStats(ctx context.Context, scope *gorm.Scope, operation
 }
 
 func (c *callbacks) endStats(scope *gorm.Scope) {
-	fmt.Println("running endStats")
 	if scope.HasError() {
 		return
 	}
 
-	fmt.Println("getting scope")
 	rctx, _ := scope.Get(contextScopeKey)
 	ctx, ok := rctx.(context.Context)
 	if !ok || ctx == nil {
 		return
 	}
-	fmt.Println("got scope")
 
 	tags := tag.FromContext(ctx)
 	ctx, _ = tag.New(ctx, tag.Delete(queryStartPropagator))
 	queryStartNS, exists := tags.Value(queryStartPropagator)
-	fmt.Println("propagator tag fetched")
 
 	if exists {
-		fmt.Println("propagator tag exists")
 		queryStart, err := time.Parse(time.RFC3339Nano, queryStartNS)
 		if err != nil {
-			fmt.Println("failed to parse timestamp")
 			return
 		}
 
 		timeSpentMs := float64(time.Since(queryStart).Nanoseconds()) / 1e6
 
 		stats.Record(ctx, MeasureLatencyMs.M(timeSpentMs))
-		fmt.Println("successfully recorded")
 	}
 
 	stats.Record(ctx, MeasureQueryCount.M(1))
